@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js SPAのサンプルアプリケーション</title>
+  <!-- CDNでVue.jsを読み込み -->
+  <script src="https://unpkg.com/vue@2.5.17"></script>
+  <script src="https://unpkg.com/vue-router@3.0.1"></script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <router-link to="/top">トップページ</router-link>
+    <router-link to="/users">ユーザー一覧ページ</router-link>
+    <!-- <router-link to="{ name: 'user'}">ユーザー詳細ページ</router-link> -->
+    <!-- <router-link :to="{ name: 'user', params: { userId: 123 }}">ユーザー詳細ページ</router-link> -->
+    <router-view></router-view>
+  </div>
+  <script>
+    var router = new VueRouter({
+      routes: [
+        {
+          path: '/top',
+          component: {
+            template: '<div>トップページです。</div>'
+          }
+        },
+        {
+          path: '/users',
+          component: UserList,
+          beforeEnter: function(to, from, next) {
+            // /users?redirect=true でアクセスされた時だけtopにリダイレクトするフック関数を追加
+            if (to.query.redirect === 'true') {
+              next('/top')
+            } else {
+              next()
+            }
+          }
+        },
+        {
+          path: '/user/:userId',
+          name: 'user',
+          component: {
+            template: '<div>ユーザーIDは{{ $route.params.userId }}です。</div>'
+          }
+        }
+      ]
+    })
+
+    var UserList = {
+      template: '#user-list',
+      data: function() {
+        return {
+          users: function () { return [] },
+          error: null
+        }
+      },
+
+      // 「ページ遷移が行われて、コンポーネントが初期化される前」に呼び出される
+      beforeRouteEnter: function (to, from, next) {
+        getUsers((function (err, users) {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            // nextに渡すcallbackでコンポーネント自身にアクセス可
+            next(function (vm) {
+              vm.users = users
+            })
+          }
+        }).bind(this))
+      }
+    }
+    // router.beforeEach(function (to, from, next) {
+    // //ユーザー一覧ページへアクセスしたときに/topへリダイレクトする例
+    // if(to.path === '/users') {
+    //   next('/top')
+    // } else {
+    //  // 引数なしでnextを呼び出すと通常通りの遷移が行われる
+    //  next()
+    // }
+    // })
+    // ルーターのインスタンスをrootとなるVueインスタンスに渡す
+    var app = new Vue({
+      router: router
+    }).$mount('#app')
+  </script>
+</body>
+</html>
