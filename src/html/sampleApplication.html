@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/style.css">
-  <title>SPAのサンプルアプリ</title>
+  <title>SPA Sample Application</title>
 </head>
 <body>
   <div id="app">
@@ -23,7 +23,7 @@
 
   <script type="text/x-template" id="user-list">
     <div>
-      <div class="loading" v-if="loading">読み込み中</div>
+      <div class="loading" v-if="loading">loading</div>
       <div v-if="error" class="error">
         {{ error }}
       </div>
@@ -35,7 +35,7 @@
 
   <script type="text/x-template" id="user-detail">
     <div>
-      <div class="loading" v-if="loading">読み込み中...</div>
+      <div class="loading" v-if="loading">loading...</div>
       <div v-if="error" class="error">
         {{ error }}
       </div>
@@ -50,20 +50,20 @@
     <div>
       <div class="sending" v-if="sending">Sending...</div>
       <div>
-        <h2>新規ユーザ作成</h2>
+        <h2>Register</h2>
         <div>
-          <label>名前:</label>
+          <label>name:</label>
           <input type="text" v-model="user.name">
         </div>
         <div>
-          <label>説明文:</label>
+          <label>description:</label>
           <textarea v-model="user.description"></textarea>
         </div>
         <div v-if="error" class="error">
           {{ error }}
         </div>
         <div>
-          <input type="button" @click="createUser" value="送信">
+          <input type="button" @click="createUser" value="submit">
         </div>
       </div>
     </div>
@@ -73,13 +73,13 @@
     <div>
       <h2>Login</h2>
       <p v-if="$route.query.redirect">
-        ログインしてください
+        Please Login
       </p>
       <form @submit.prevent="login">
         <label><input v-model="email" placeholder="email"></label>
         <label><input v-model="pass" placeholder="password" type="password"></label><br>
-        <button type="submit">ログイン</button>
-        <p v-if="error" class="error">ログインに失敗しました</p>
+        <button type="submit">login</button>
+        <p v-if="error" class="error">login failed</p>
       </form>
     </div>
   </script>
@@ -133,11 +133,11 @@
 
         createUser: function () {
           if (this.user.name.trim() === '') {
-            this.error = '名前を入力してください'
+            this.error = 'Please input name'
             return
           }
           if (this.user.description.trim() === '') {
-            this.error = '説明文を入力してください'
+            this.error = 'Please input description'
             return
           }
           postUser(this.user, (function (err, user) {
@@ -147,7 +147,7 @@
             } else {
               this.error = null
               this.user = this.defaultUser()
-              alert('新規ユーザを登録しました。')
+              alert('registered')
               this.$router.push('/users')
             }
           }).bind(this))
@@ -276,7 +276,7 @@
         {
           path: '/home',
           component: {
-            template: '<div>Homeです。</div>'
+            template: '<div>Home</div>'
           }
         },
         {
